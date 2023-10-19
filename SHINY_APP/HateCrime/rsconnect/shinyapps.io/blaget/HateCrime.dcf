@@ -1,0 +1,12 @@
+name: HateCrime
+title: HateCrime
+username: blaget
+account: blaget
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 10249284
+bundleId: 7825668
+url: https://blaget.shinyapps.io/HateCrime/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

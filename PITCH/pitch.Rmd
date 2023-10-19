@@ -1,0 +1,65 @@
+---
+title: "FBI Hate Crime Statistics, 2015-2020"
+author: "Bruno Laget Merino"
+date: "2023-10-19"
+output: ioslides_presentation
+mode: selfcontained
+job: Reproducible Pitch Presentation
+subtitle: Analysis of a joint dataset by the FBI and SPLC
+highlighter: highlight.js
+widgets: bootstrap
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,warning=FALSE, message=FALSE)
+library("ggplot2")
+library("ggExtra")
+library("bslib")
+```
+
+## Objective
+
+These are the statistics of hate crimes across US states between 2012 and 2015, as compiled by the FBI, the Southern Poverty Law Center and the Kaiser Family foundations. The dataset tries to correlate the prevalence of hate crimes with a number of socioeconomic and sociopolitical indicators, which will be explained in the next page.
+
+
+## Data Dictionary
+
+<font size="2">The raw data behind the story [Higher Rates Of Hate Crimes Are Tied To Income Inequality](https://fivethirtyeight.com/features/higher-rates-of-hate-crimes-are-tied-to-income-inequality/)</font>
+
+Header | Definition
+---|---------
+<font size="1">`state`</font> | <font size="1">State name
+<font size="1">`median_household_income`</font> | <font size="1">Median household income, 2016</font>
+<font size="1">`share_unemployed_seasonal`</font> | <font size="1">Share of the population that is unemployed (seasonally adjusted), Sept. 2016</font>
+<font size="1">`share_population_in_metro_areas`</font> | <font size="1">Share of the population that lives in metropolitan areas, 2015</font>
+<font size="1">`share_population_with_high_school_degree`</font> | <font size="1">Share of adults 25 and older with a high-school degree, 2009</font>
+<font size="1">`share_non_citizen`</font> | <font size="1">Share of the population that are not U.S. citizens, 2015</font>
+<font size="1">`share_white_poverty`</font> | <font size="1">Share of white residents who are living in poverty, 2015</font>
+<font size="1">`gini_index`</font> | <font size="1">Gini Index, 2015</font>
+<font size="1">`share_non_white`</font> | <font size="1">Share of the population that is not white, 2015</font>
+<font size="1">`share_voters_voted_trump`</font> | <font size="1">Share of 2016 U.S. presidential voters who voted for Donald Trump</font>
+<font size="1">`hate_crimes_per_100k_splc`</font> | <font size="1">Hate crimes per 100,000 population, Southern Poverty Law Center, Nov. 9-18, 2016</font>
+<font size="1">`avg_hatecrimes_per_100k_fbi`</font> | <font size="1">Average annual hate crimes per 100,000 population, FBI, 2010-2015</font>
+
+
+## Distribution and Q-Q plot
+
+```{r}
+HateCrime <- read.csv("hate_crimes.csv")
+HateCrimeTrimmed <- HateCrime[!is.na(HateCrime$avg_hatecrimes_per_100k_fbi),]
+HateCrimeTrimmed <- HateCrimeTrimmed[HateCrimeTrimmed$avg_hatecrimes_per_100k_fbi<10,]
+HC <- HateCrimeTrimmed[,-which(names(HateCrimeTrimmed) =="hate_crimes_per_100k_splc")]
+qqnorm(HC$avg_hatecrimes_per_100k_fbi, col = "#0066CC")
+qqline(HC$avg_hatecrimes_per_100k_fbi, col = "#FF66CC")
+```
+
+## How does the prevalence of hate crimes correlate with inequality?
+
+```{r pressure}
+ggplot(data = HC, aes(HC$avg_hatecrimes_per_100k_fbi, HC$gini_index, colour="#0066CC", main = "Avg Hate Crime rate per 100k people vs GINI index")) + list(
+      theme(legend.position = "bottom"),
+      geom_point(),
+      geom_smooth()
+)
+```
+
